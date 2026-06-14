@@ -59,6 +59,7 @@ export type WaffoPancakePaymentResponse = ApiResponse<
     }
   | string
 >
+export type CryptomusPaymentResponse = ApiResponse<{ payment_url: string }>
 
 /**
  * Creem product configuration
@@ -150,6 +151,10 @@ export interface TopupInfo {
   enable_waffo_pancake_topup?: boolean
   /** Minimum topup amount for Waffo Pancake */
   waffo_pancake_min_topup?: number
+  /** Whether Cryptomus topup is enabled */
+  enable_cryptomus_topup?: boolean
+  /** Minimum topup amount for Cryptomus */
+  cryptomus_min_topup?: number
   /** Whether redemption code usage is enabled */
   enable_redemption?: boolean
   /** Whether compliance confirmation has been completed */
@@ -200,6 +205,14 @@ export interface WaffoPaymentRequest {
  * Waffo Pancake payment request parameters
  */
 export interface WaffoPancakePaymentRequest {
+  /** Topup amount */
+  amount: number
+}
+
+/**
+ * Cryptomus payment request parameters
+ */
+export interface CryptomusPaymentRequest {
   /** Topup amount */
   amount: number
 }
