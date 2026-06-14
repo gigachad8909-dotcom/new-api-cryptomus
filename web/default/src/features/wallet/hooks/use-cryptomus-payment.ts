@@ -41,8 +41,13 @@ export function useCryptomusPayment() {
         return false
       }
 
-      if (response.data?.payment_url) {
-        window.open(response.data.payment_url, '_blank')
+      // Backend returns URL directly in data field as string
+      const paymentUrl = typeof response.data === 'string'
+        ? response.data
+        : response.data?.payment_url
+
+      if (paymentUrl) {
+        window.open(paymentUrl, '_blank')
         toast.success(i18next.t('Redirecting to payment page...'))
         return true
       }
