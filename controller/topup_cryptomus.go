@@ -165,6 +165,9 @@ func RequestCryptomus(c *gin.Context) {
 	client := &http.Client{Timeout: 10 * time.Second}
 	jsonData, _ := json.Marshal(paymentData)
 
+	logger.LogInfo(c.Request.Context(), fmt.Sprintf("Cryptomus payment request - Amount: %.2f, OrderID: %s, JSON: %s", payMoney, tradeNo, string(jsonData)))
+	logger.LogInfo(c.Request.Context(), fmt.Sprintf("Cryptomus headers - Merchant: %s, Sign: %s", setting.CryptomusMerchantID, sign))
+
 	httpReq, err := http.NewRequest("POST", "https://api.cryptomus.com/v1/payment", bytes.NewBuffer(jsonData))
 	httpReq.Header.Set("Content-Type", "application/json")
 	httpReq.Header.Set("merchant", setting.CryptomusMerchantID)
@@ -179,6 +182,8 @@ func RequestCryptomus(c *gin.Context) {
 	defer resp.Body.Close()
 
 	body, _ := io.ReadAll(resp.Body)
+	logger.LogInfo(c.Request.Context(), fmt.Sprintf("Cryptomus API Response: %s", string(body)))
+
 	var paymentResp CryptomusPaymentResponse
 	if err := json.Unmarshal(body, &paymentResp); err != nil {
 		logger.LogError(c.Request.Context(), "Cryptomus response parse failed: " + err.Error())
@@ -186,7 +191,10 @@ func RequestCryptomus(c *gin.Context) {
 		return
 	}
 
+	logger.LogInfo(c.Request.Context(), fmt.Sprintf("Cryptomus parsed response - State: %d, URL: %s", paymentResp.State, paymentResp.Result.URL))
+
 	if paymentResp.State != 0 {
+		logger.LogError(c.Request.Context(), fmt.Sprintf("Cryptomus payment failed - State: %d", paymentResp.State))
 		c.JSON(http.StatusOK, gin.H{"message": "error", "data": "创建支付订单失败"})
 		return
 	}
