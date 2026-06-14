@@ -75,8 +75,8 @@ func RequestCryptomusAmount(c *gin.Context) {
 		return
 	}
 
-	if req.Amount < int64(setting.CryptomusMinTopUp) {
-		c.JSON(http.StatusOK, gin.H{"message": "error", "data": fmt.Sprintf("充值数量不能小于 %d", setting.CryptomusMinTopUp)})
+	if req.Amount < getCryptomusMinTopup() {
+		c.JSON(http.StatusOK, gin.H{"message": "error", "data": fmt.Sprintf("充值数量不能小于 %d", getCryptomusMinTopup())})
 		return
 	}
 
@@ -127,8 +127,8 @@ func RequestCryptomus(c *gin.Context) {
 		return
 	}
 
-	if req.Amount < int64(setting.CryptomusMinTopUp) {
-		c.JSON(http.StatusOK, gin.H{"message": "error", "data": fmt.Sprintf("充值数量不能小于 %d", setting.CryptomusMinTopUp)})
+	if req.Amount < getCryptomusMinTopup() {
+		c.JSON(http.StatusOK, gin.H{"message": "error", "data": fmt.Sprintf("充值数量不能小于 %d", getCryptomusMinTopup())})
 		return
 	}
 
@@ -312,6 +312,14 @@ func CryptomusNotify(c *gin.Context) {
 
 	logger.LogInfo(c.Request.Context(),fmt.Sprintf("Cryptomus payment processed: user=%d, amount=%d, order=%s",
 		topUp.UserId, topUp.Amount, payload.OrderID))
+}
+
+func getCryptomusMinTopup() int64 {
+	minTopup := setting.CryptomusMinTopUp
+	if operation_setting.GetQuotaDisplayType() == operation_setting.QuotaDisplayTypeTokens {
+		minTopup = minTopup * int(common.QuotaPerUnit)
+	}
+	return int64(minTopup)
 }
 
 func isCryptomusTopUpEnabled() bool {
