@@ -114,6 +114,12 @@ func InitOptionMap() {
 	common.OptionMap["WaffoPancakeMinTopUp"] = strconv.Itoa(setting.WaffoPancakeMinTopUp)
 	common.OptionMap["WaffoPancakeStoreID"] = setting.WaffoPancakeStoreID
 	common.OptionMap["WaffoPancakeProductID"] = setting.WaffoPancakeProductID
+	common.OptionMap["CryptomusMerchantID"] = setting.CryptomusMerchantID
+	common.OptionMap["CryptomusPaymentKey"] = setting.CryptomusPaymentKey
+	common.OptionMap["CryptomusCallbackURL"] = setting.CryptomusCallbackURL
+	common.OptionMap["CryptomusReturnURL"] = setting.CryptomusReturnURL
+	common.OptionMap["CryptomusUnitPrice"] = strconv.FormatFloat(setting.CryptomusUnitPrice, 'f', -1, 64)
+	common.OptionMap["CryptomusMinTopUp"] = strconv.Itoa(setting.CryptomusMinTopUp)
 	common.OptionMap["TopupGroupRatio"] = common.TopupGroupRatio2JSONString()
 	common.OptionMap["Chats"] = setting.Chats2JsonString()
 	common.OptionMap["AutoGroups"] = setting.AutoGroups2JsonString()
@@ -462,6 +468,18 @@ func updateOptionMap(key string, value string) (err error) {
 		setting.WaffoPancakeUnitPrice, _ = strconv.ParseFloat(value, 64)
 	case "WaffoPancakeMinTopUp":
 		setting.WaffoPancakeMinTopUp, _ = strconv.Atoi(value)
+	case "CryptomusMerchantID":
+		setting.CryptomusMerchantID = value
+	case "CryptomusPaymentKey":
+		setting.CryptomusPaymentKey = value
+	case "CryptomusCallbackURL":
+		setting.CryptomusCallbackURL = value
+	case "CryptomusReturnURL":
+		setting.CryptomusReturnURL = value
+	case "CryptomusUnitPrice":
+		setting.CryptomusUnitPrice, _ = strconv.ParseFloat(value, 64)
+	case "CryptomusMinTopUp":
+		setting.CryptomusMinTopUp, _ = strconv.Atoi(value)
 	case "TopupGroupRatio":
 		err = common.UpdateTopupGroupRatioByJSONString(value)
 	case "GitHubClientId":
